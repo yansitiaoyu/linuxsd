@@ -1,1 +1,1 @@
-这是一个主要用来学习linux的仓库，iosd主要是学习linux文件io
+这是一个主要用来学习linux的仓库，iosd是文件io相关部分
