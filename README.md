@@ -1,1 +1,1 @@
-这是一个主要用来学习linux的仓库，iosd是文件io相关部分
+这是一个主要用来学习linux的仓库，readtext是与Linux操作相关的部分，iosd是linux文件io相关部分，
