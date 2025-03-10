@@ -16,6 +16,10 @@ int main(int argc,char *argv[])
 
 	//打开一个读文件
 	fdin=open(argv[1],O_RDONLY);
+
+	//lseek函数用于查看文件头到SEEK_END标记的位置偏移了offset个字节后的位置之间的长度
+	printf("file length:%ld\n",lseek(fdin,0,SEEK_END));
+
 	if(fdin<0){
 		fprintf(stderr,"open error:%s",strerror(errno));
 		exit(1);
