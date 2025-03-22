@@ -3,3 +3,4 @@
 "gcc -S hello.i -o hello.s" 命令将预处理文件预编译成.s汇编代码文件 
 "gcc -c hello.s -o hello.o" 命令将汇编文件预编译成"中间.o目标代码文件 
 "gcc hello.o -o hello" 命令生成可执行文件 
+vsplit 文件路径 是将命令行窗口垂直打开另外一个窗口

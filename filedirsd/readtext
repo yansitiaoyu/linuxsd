@@ -1,0 +1,5 @@
+struct stat是文件状态结构体
+int stat(const char *pathname,struct stat buff);fstat(int fd,struct stat buff)，结构体buff中便是文件各种参数，函数成功则返回0，失败则返回-1
+int access(const char *pathname,int mode),检查文件是否具有mode权限，成功则返回0，失败则是1
+软硬链接创建函数link(),symlink(),linkread();
+编译指令错误时候会出现-bash: bin/file_s_link: Permission denied错误提示，是因为编译指令gcc -o bin/file_access src/file_access.c中间多了个-c，错误为gcc -o bin/file_access -c src/file_access.c

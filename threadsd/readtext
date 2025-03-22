@@ -1,0 +1,21 @@
+linux中线程的访问和控制都需要线程库pthread实现，linux线程程序编译gcc需要链接线程库pthread;
+pthread_cerate(pthread_t *restrict tidp,const pthread_attr_t *restrict attr,void *(*start_rtn)(viod*),void *restrict arg)创建进程函数，成功返回0，失败返回错误编号，pthread_t线程参数类型，start_rtn线程执行函数地址;
+创建线程后，主控线程和创建线程的执行顺序不确定，若是主控线程先执行直接退出，则创建线程不会执行,pthread_self()可以获取当前线程id;
+pthread_join(pthread_t tid,void** thread_return)直接阻塞主控线程，直到tid线程执行结束;
+pthread_cleanup_push()与pthread_cleanup_pop()线程清理函数二者是同对出现的;
+pthread_attr_t 是线程的结构体定义类型，结构体里是线程各项参数，pthread_init(pthread_attr_t *attr)初始化线程属性，pthread_attr_destory(pthread_attr_t *attr)线程属性销毁；
+pthread_attr_getdetachstat(const pthread_attr_t *attr,int *detachstate)获得主线程分离属性值，
+pthread_attr_setdetachstat(const pthread_attr_t *attr,int detachstate)设置主线程分离属性，有两种取值分别为PTHREAD_CREATE_JOINABLE子线程正常启动和PTHREAD_CREATE_DETACHED子线程分离启动(子线程结束就回收资源不用pthread_join等待主线程回收)；
+注：这里的设置属性是指的主线程的属性，不是子线程的属性，设置主线程属性后，主线程在创建子线程时会根据主线程属性值选择启动方式
+pthread_mutex_init(pthread_mutex_t *mutex,pthread_mutexattr_t *mutexattr)初始化锁mutex,锁创建必须初始化,pthread_mutex_destory(pthread_mutex_t *mutex)销毁锁mutex
+pthread_mutex_lock(pthread_mutex_t* mutex)上锁，pthread_mutex_unblock(pthread_mutex_t* mutex)解锁
+pthrread_rwlock_td读写锁
+读写锁初始化pttread_rwlock_init(pthread_rwlock_t* restrict rwlock,pthread_ewlockattr_t*attr);
+读写锁销毁pthread_rwlock_destory(pthread_rwlock_t* rwlock);
+读写锁上锁分为上读锁和写锁，读锁：pthread_rwlock_rdlock()，写锁：pthread_rwlock_wrlock(),读锁写锁解锁都是pthread_rwlock_unlock(pthread_rwlock_t* rwlock);
+线程同步条件变量，类型：pthread_cond_t,条件变量使用了共享资源队列来存储等待线程，所以需要与锁搭配
+同步过程：初始化条件变量pthread_cond_init(),线程等待pthreat_cond_wait()及pthread_cond_timewait(),线程通知pthread_cond_signal()及pthread_cond_broadcast(),条件变量销毁pthread_cond_destory()
+信号量：sem_t信号数据类型
+sem_init(sem_t* sem,int pshared,unsigned value)信号初始化，sem_destroy(sem_t* sem)信号量销毁
+sem_post(sem_t* sem)信号量加一，sem_wait(sem_t* sem)信号量减一
+

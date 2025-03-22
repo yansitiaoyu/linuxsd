@@ -1,0 +1,4 @@
+signal(signo,function/SIG_IGN/SIG_DFL)函数是向内核登记信号值以及信号处理函数，如果未登记则一般会有默认的信号处理函数，登记成功返回函数指针，失败返回SIG_ERR,参数如果是SIG_IGN则忽略信号，SIG_DFL是默认方式处理信号,SIGKILL和SIGTOP两个信号不能被捕获也不能被忽略
+SIGCHLD信号子进程结束时产生，父进程捕获到便回收子进程内存空间，不用wait()函数一直挂起等待处理
+kill(pid_t pid,int signo),arise(int signo)都能发送信号，kill()可以向其他进程发送，arise()只能向自己发送，相当于kill(getpid(),signo)
+

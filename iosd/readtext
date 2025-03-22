@@ -5,3 +5,5 @@ include用来存放自己编辑的头文件
 extern关键字的作用是告诉编译器该变量或函数已经在其他文件中定义，注意：声明和定义的区别，定义是分配了内存
 gcc -o obj/io.o -Iinclude -c src/io.c 参数"-Iinclude"指定头文件所在目录，这里是相对位置
 gcc -o bin/cp1 -Iinclude obj/io.o src/cp1.c 命令直接将包换main函数的程序输出为可执行文件
+FILE结构体是标准C里面的文件结构体，带缓存的文件结构体
+iosd总结:linux的io操作中，最主要的函数就是open(),read(),write(),lseek(),dup2(),fcntl()
