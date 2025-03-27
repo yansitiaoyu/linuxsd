@@ -1,0 +1,18 @@
+创建匿名管道：pipe(int fd[]),fd[]进程id数组，管道只能用于关系进程间的通信，例如父子,兄弟进程,管道的操作和文件操作一样，都有read,write,close
+命名管道fifo,命名管道可实现非关系进程之间的通信，命名管道在内核中是缓存，在文件系统中是文件
+命名管道创建：mkfifo(const char* pathname,mode_t mode),创建后，打开读写和文件一样，都是open(),read(),write(),close()
+system V IPC包括消息队列，共享内存，信号量，三者都是在内核中，用户态下创建销毁,三者创建时都是key_t key创建,返回值分别是各自id,三者都有各自对应的属性控制结构体sd,分别为msgid_ds,shmid_ds,semid_ds。
+消息队列创建：int msgget(key_t key,int flag)，返回消息队列唯一标识符id，flag权限位
+消息队列状态控制：int msgctl(int msgid,int cmd,struct msqid_ds *buf),cmd控制命令
+消息发送：int msgsnd(int msgid,const void *ptr,size_t nbetys,int flag),ptr指向消息结构体的指针,flag阻塞标志位
+消息接受：ssizw_t msgrcv(int msgid,void *ptr,size_t nbytes,long type,int flag)，相对与msgsnd()只多了一个long type参数
+共享内存是在内存上的一块存储区域，通过映射到多个进程的虚拟地址空间上完成进程间的通信，所有没有同步机制
+共享内存创建：int shmget(key_t key,size_t size,int shmflg),返回共享内存唯一标识符id,shmflg权限位
+共享内存状态控制：int shmctl(int shmid,int cmd,struct shmid_ds *buf),cmd控制命令
+共享内存映射：void* shmat(int shmid,char* shmaddr,int shmflag)返回共享内存映射到进程的虚拟地址
+共享内存解除映射：int shmdt(char *shmaddr)
+信号量集：用于进程间的同步互斥
+信号集创建：int semget(key_t key,int nsems,int flag),nsums信号量数，flag权限控制
+信号集属性控制：semctl(int semid,int semnum,int cmd,.../*union semun arg*/),union semun arg联合体，里面包括int val,struct semid_ds *buf,unsigned short* arry,不同的值对应不同的操作
+信号量集pv操作：int semop(int semid,struct sembuf *sops,size_t nsops),size_t nsops表示传入的第二个参数结构体数组的长度,结构体sembuf控制pv操作
+
