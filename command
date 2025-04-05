@@ -28,3 +28,9 @@ git merge branch-name 将branch-name分支合并到当前分支上
 git branch -d branch-name 将已经合并的branch-name分支删除，未合并的分支这条命令不会执行，强制删除参数是-D
 git merge --abort 终止合并命令
 git rebase branch-name 变基合并命令，branch-name是合并后的基底
+"gcc hello.c -o hello" 命令编译生成可执行文件hello
+"gcc -E hello.c -o hello.i" 命令将源文件和相关头文件预编译成.i文件
+"gcc -S hello.i -o hello.s" 命令将预处理文件预编译成.s汇编代码文件 
+"gcc -c hello.s -o hello.o" 命令将汇编文件预编译成"中间.o目标代码文件 
+"gcc hello.o -o hello" 命令生成可执行文件 
+vsplit 文件路径 是将命令行窗口垂直打开另外一个窗口

@@ -1,0 +1,81 @@
+socket套接字是一种内核中抽象出来的文件描述符，在内核中是一个五元组
+socket创建：int socket(int domain,int type,int protocol),domain是地址族address family，AF_INET表示IPV4，AF_INET6表示IPV6，type表示网络协议，SOC_STREAM表示tcp,SOC_DGRIP表示udp,protocol默认0表示跟随type
+uint32_t htonl(uint32_t hostlong)32位主机字节序转换为网络字节序，uint16_t htons(uint16_t hostshort)16位主机字节序转换为网络字节序
+同样有网络字节序转换为主机字节序：uint32_t ntohl(uint32_t netlong),uint16_t ntohs(uint16_t netshort)
+通用地址结构体：struct sockddr{
+	                unsigned short sa_family; /*intnet 地址族，AF_xxxx */
+					char sa_data[14];         /*14 bytes的协议地址，里面包含ip,端口号等信息*/
+                              }
+在需要socket地址的函数中，都需要将指向地址的指针转换为(struct sockaddr*)传进去
+
+英特网地址结构体：struct in_addr
+	                  in_addr_t s_addr; /*32位IPv4地址(网络字节序),这是通用接口，ipv6也用*/    
+                                }
+                  struct sockaddr_in{
+					  short int sin_family;        /*地址族（主机字节序）*/
+                      unsigned short int sin_port; /*端口号，16位值（网络字节序）*/
+					  struct in_addr sin_addr;     /*32位IPv4地址（网络字节序）*/
+					  usigned char sin_zero[8]     /*添0（格式补齐）*/
+				                    }
+网络地址结构和通用地址结构是等效的，可以相互转换，只是函数里一般都是使用通用地址结构
+
+IPv4地址族（二进制网络字节序）和字符地址（字符串点分（point）十进制）之间的转换，成功返回字符串地址指针，失败返回NULL：const char *inet_ntop(int domain,
+		                              const void *restrict addr,
+						                        char *restrict str,socklen_t size)
+字符地址转换为网路地址：int inet_pton(int domain,
+		                                    const char *restrict str,
+											              void *restrict addr)
+绑定地址：int bind(int sockfd, 
+		                 const struct sockaddr *addr, 
+						         socklen_t len);
+查找绑定到套接字的地址：int getsockname(int sockfd,
+		                                    struct sockaddr *restrict addr,
+		                                              socklen_t *restrict alenp);
+获取对方地址：int getpeername(int sockfd,
+		                           struct sockaddr *restrict addr,
+								             socklen_t *restrict alenp);
+服务器端监听：int listen(int sockfd, int backlog); backlog指定监听客服端队列的长度,将监听到的客服端请求放到队列中
+服务器端接受客服端请求：int accept(int sockfd, const struct sockaddr *addr, socklen_t *len); accept返回的是连接对应的客服端sockfd描述符，相当于双通管道，一个描述符对应读，一个描述符对应写，客服端也一样
+接受请求后便可以对sockfd进行read(),write(),close()，服务器中的sockfd和连接请求的sockfd不是同一个sockfd，所以都需要服务器端主动close()
+客服端连接：int connect(int sockfd, const struct sockaddr *addr,socklen_t len);
+
+udp协议中没有监听和接受连接步骤，直接就是读取和发送步骤，发送数据：
+	ssize_t send(int sockfd, const void* buff, size_t nbytes, int flag),udp通信中除非第五个参数目标地址已经被绑定才使用该函数
+
+    ssize_t sendto(int sockfd, const void* buff, size_t nbytes, int flag, const struct sockaddr* destaddr, socklen_t destlen)
+sendto()函数中的参数const struct sockaddr* destaddr是目标地址的地址信息
+
+接受数据：ssize_t recv(int sockfd, void* buff, size_t nbytes, int flag),目标地址已经通过connect()函数绑定才是有这个函数通信
+
+	      ssize_t recvfrom(int sockfd, void *restrict buf, size_t len, int flag, 
+			                                   struct sockaddr *restrict addr, socklen_t *restrict addrlen)
+
+配置套接字选项函数：int setsockopt(int sockfd, int level, 
+		                                 int optname, const void *optval, socklen_t optlen);
+对套接字行为进行精细控制，例如调整超时，冲用地址，修改缓冲区大小等；
+获得套接字选项函数：int getsockopt(int sockfd, int level, 
+		                                 int optname, void *optval, socklen_t *optlen);
+
+I/O多路复用select,返回准备就绪的描述符,描述符集readfds,writefds,exceptfds用户定义,使用select后I/O读写不用再设置为非阻塞:
+int select(int maxfdp1, fd_set *readfds, fd_set *writefds, 
+		                    fd_set *exceptfds, struct timeval *timeout);
+等待超时结构体：struct timeval{
+	                            long tv_sec; /*seconds*/
+								long tv_usec; /*microseconds*/
+                                  }
+通过四个宏定义函数对描述符集处理：
+                    FD_ZERO(fd_set *set) 清除一个文件描述符集
+					FD_SET(int fd, fd_set *set) 将一个文件描述加入文件描述符集中
+					FD_CLR(int fd, fd_set *set) 将一个文件描述符从文件描述符集中清除
+					FD_ISSET(int fd, fd_set *set) 测定该集合中的一个给定位是否有变化
+使用select()函数之前，首先使用FD_ZERO和FD_SET来初始化文件描述符集
+
+守护进程的创建：
+             a)使用umask将文件模式屏蔽字设置为0
+			 b)使用fork()创建子进程，然后父进程退出exit(0)
+	         c)调用setsid创建一个新会话
+			 d)将当前工作目录更改为更目录
+			 e)关闭不需要的文件描述符
+所有的输入输出都写到日志文件syslog中，openlog()打开日志文件，syslog()向文件日志中写入消息，closelog()关闭日志文件
+
+
